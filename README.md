@@ -14,7 +14,7 @@
 
 ## Getting Started
 
-> npm install mongoose-auto-increment
+> npm install shenyzore/mongoose-auto-increment
 
 Once you have the plugin installed it is very simple to use. Just get reference to it, initialize it by passing in your
 mongoose connection and pass `autoIncrement.plugin` to the `plugin()` function on your schema.
