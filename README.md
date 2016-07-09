@@ -4,6 +4,8 @@
 [![Dependencies Status](https://gemnasium.com/codetunnel/mongoose-auto-increment.png)](https://gemnasium.com/codetunnel/mongoose-auto-increment)
 [![NPM version](https://badge.fury.io/js/mongoose-auto-increment.png)](http://badge.fury.io/js/mongoose-auto-increment)
 
+> Fork from [mongoose-auto-increment](https://github.com/chevex-archived/mongoose-auto-increment) and add options config for increment the specified `field` union with `model` and another field names `union`.
+
 > Mongoose plugin that auto-increments any ID field on your schema every time a document is saved.
 
 ---
@@ -75,6 +77,16 @@ bookSchema.plugin(autoIncrement.plugin, {
 ````
 
 Your first book document would have a `bookId` equal to `100`. Your second book document would have a `bookId` equal to `200`, and so on.
+
+### Want to increment the specified `field` union with `model` and another field names `union`?
+
+````js
+bookSchema.plugin(autoIncrement.plugin, {
+    model: 'Book',
+    field: 'incrementWhenSameCategoryId',
+    union: 'categoryId'
+});
+````
 
 ### Want to know the next number coming up?
 
