@@ -94,6 +94,93 @@ describe('mongoose-auto-increment', function () {
   });
 
 
+  it('should use the specified count instead', function(done) {
+
+    // Arrange
+    var userSchema = new mongoose.Schema({
+      name: String,
+      dept: String
+    });
+    userSchema.plugin(autoIncrement.plugin, { model: 'User', field: 'userId' });
+    var User = connection.model('User', userSchema),
+    user1 = new User({ name: 'Charlie', dept: 'Support', userId: 1 }),
+    user2 = new User({ name: 'Charlene', dept: 'Marketing', userId: 0 });
+    user3 = new User({ name: 'Charlene', dept: 'Marketing', userId: 3 });
+    user4 = new User({ name: 'Charlene', dept: 'Marketing', userId: 2 });
+    user5 = new User({ name: 'Charlene', dept: 'Marketing' });
+
+
+    // Act
+    async.series({
+      user1: function (cb) {
+        user1.save(cb);
+      },
+      user2: function (cb) {
+        user2.save(cb);
+      },
+      user3: function (cb) {
+        user3.save(cb);
+      },
+      user4: function (cb) {
+        user4.save(cb);
+      },
+      user5: function (cb) {
+        user5.save(cb);
+      }
+    }, assert);
+
+    // Assert
+    function assert(err, results) {
+      should.not.exist(err);
+      results.user1[0].should.have.property('userId', 1);
+      results.user2[0].should.have.property('userId', 0);
+      results.user3[0].should.have.property('userId', 3);
+      results.user4[0].should.have.property('userId', 2);
+      results.user5[0].should.have.property('userId', 4);
+      done();
+    }
+
+  });
+
+
+  it('should increment the specified field only when unions', function(done) {
+
+    // Arrange
+    var userSchema = new mongoose.Schema({
+      name: String,
+      dept: String
+    });
+    userSchema.plugin(autoIncrement.plugin, { model: 'User', field: 'number', union: 'dept' });
+    var User = connection.model('User', userSchema),
+    user1 = new User({ name: 'Charlie', dept: 'Support' }),
+    user2 = new User({ name: 'Charlene', dept: 'Marketing' });
+    user3 = new User({ name: 'Charlene2', dept: 'Marketing' });
+
+    // Act
+    async.series({
+      user1: function (cb) {
+        user1.save(cb);
+      },
+      user2: function (cb) {
+        user2.save(cb);
+      },
+      user3: function (cb) {
+        user3.save(cb);
+      }
+    }, assert);
+
+    // Assert
+    function assert(err, results) {
+      should.not.exist(err);
+      results.user1[0].should.have.property('number', 0);
+      results.user2[0].should.have.property('number', 0);
+      results.user3[0].should.have.property('number', 1);
+      done();
+    }
+
+  });
+
+
   it('should start counting at specified number (Test 3)', function (done) {
 
     // Arrange
